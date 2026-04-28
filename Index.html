@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Positive Strides — SMS Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+  --green-dark:   #1c3d24;
+  --green-mid:    #2e6b3e;
+  --green-bright: #3d8c50;
+  --green-light:  #e8f2ea;
+  --green-pale:   #f4f9f5;
+  --gold:         #c8913a;
+  --gold-light:   #f5e9d6;
+  --text:         #1a2b1d;
+  --text-muted:   #5a7060;
+  --border:       #c8dccb;
+  --white:        #ffffff;
+  --red:          #c0392b;
+  --red-light:    #fdf0ee;
+  --badge-colors: #2e6b3e, #7b4ea0, #c8913a, #2980b9, #c0392b, #16a085, #8e44ad, #d35400;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--green-pale);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.shell {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  min-height: 100vh;
+}
+
+header {
+  background: var(--green-dark);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 1.2rem;
+  letter-spacing: .02em;
+}
+
+header .tagline {
+  color: #8ab890;
+  font-size: .75rem;
+  font-weight: 300;
+  margin-left: auto;
+  margin-right: .5rem;
+}
+
+.gear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8ab890;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: .2rem .3rem;
+  border-radius: 4px;
+  transition: color .2s;
+}
+.gear-btn:hover { color: #fff; }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  background: var(--green-dark);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #7aaa82;
+  font-family: 'Lato', sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .6rem .5rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.tab:hover { color: #cde8cf; }
+.tab.active { color: var(--white); border-bottom-color: var(--gold); }
+
+/* ── Main panels ── */
+.panel { display: none; padding: 1.25rem; max-width: 820px; margin: 0 auto; width: 100%; }
+.panel.active { display: block; }
+
+/* ── Cards ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: .9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .45rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Lato', sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter .15s, transform .1s;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: scale(.97); }
+.btn-green  { background: var(--green-mid);   color: #fff; }
+.btn-gold   { background: var(--gold);         color: #fff; }
+.btn-ghost  { background: transparent; color: var(--green-mid); border: 1.5px solid var(--green-mid); }
+.btn-danger { background: var(--red);          color: #fff; }
+.btn-sm     { padding: .3rem .7rem; font-size: .75rem; }
+.btn-xs     { padding: .18rem .5rem; font-size: .7rem; border-radius: 4px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ── Form fields ── */
+label { font-size: .78rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: .25rem; }
+input[type=text], input[type=password], select, textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: .5rem .75rem;
+  font-family: 'Lato', sans-serif;
+  font-size: .88rem;
+  color: var(--text);
+  background: var(--white);
+  transition: border-color .2s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green-bright); }
+.field { margin-bottom: .75rem; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .75rem; }
+
+/* ── Badges / tags ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .15rem .55rem;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--green-mid);
+  white-space: nowrap;
+}
+.badge.removable { cursor: pointer; }
+.badge.removable:hover { filter: brightness(.85); }
+
+/* ── Contact list ── */
+.contact-list { list-style: none; }
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .6rem .25rem;
+  border-bottom: 1px solid var(--border);
+  font-size: .85rem;
+}
+.contact-item:last-child { border-bottom: none; }
+.contact-item .name { font-weight: 700; flex: 1; min-width: 0; }
+.contact-item .phone { color: var(--text-muted); font-size: .8rem; min-width: 110px; }
+.contact-item .tags { display: flex; gap: .3rem; flex-wrap: wrap; flex: 1; }
+.contact-item .actions { display: flex; gap: .3rem; }
+.contact-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: .75rem;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.contact-checkbox { accent-color: var(--green-mid); width: 15px; height: 15px; cursor: pointer; }
+
+/* ── Groups ── */
+.group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .75rem; }
+.group-card {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: .85rem 1rem;
+  position: relative;
+  background: var(--white);
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+.group-card:hover { border-color: var(--green-bright); box-shadow: 0 2px 8px rgba(46,107,62,.15); }
+.group-card.selected { border-color: var(--green-bright); background: var(--green-light); }
+.group-card .g-name { font-weight: 700; font-size: .9rem; margin-bottom: .3rem; }
+.group-card .g-count { font-size: .75rem; color: var(--text-muted); }
+.group-card .g-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  position: absolute; top: .85rem; right: .85rem;
+}
+.group-actions { position: absolute; bottom: .6rem; right: .6rem; display: flex; gap: .25rem; opacity: 0; transition: opacity .15s; }
+.group-card:hover .group-actions { opacity: 1; }
+
+/* ── Send panel ── */
+.recipient-summary {
+  background: var(--green-light);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: .85rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.recipient-count { font-size: 1.4rem; font-weight: 700; color: var(--green-dark); line-height: 1; }
+
+.char-counter { font-size: .72rem; color: var(--text-muted); text-align: right; margin-top: .25rem; }
+.char-counter.warn { color: var(--gold); }
+.char-counter.over { color: var(--red); }
+
+.progress-bar-wrap { background: var(--green-light); border-radius: 20px; height: 6px; margin: .75rem 0; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--green-bright); border-radius: 20px; transition: width .3s; width: 0; }
+
+.result-list { list-style: none; max-height: 200px; overflow-y: auto; font-size: .78rem; }
+.result-item { display: flex; align-items: center; gap: .5rem; padding: .25rem 0; border-bottom: 1px solid var(--green-light); }
+.result-item:last-child { border-bottom: none; }
+.result-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.result-dot.ok  { background: var(--green-bright); }
+.result-dot.err { background: var(--red); }
+
+/* ── Settings overlay ── */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 1rem; }
+.modal-footer { display: flex; justify-content: flex-end; gap: .5rem; margin-top: 1rem; }
+
+/* ── CSV import modal ── */
+.col-map { display: grid; grid-template-columns: auto 1fr; gap: .5rem .75rem; align-items: center; font-size: .82rem; }
+.col-map label { font-weight: 700; color: var(--text-muted); white-space: nowrap; margin: 0; }
+
+/* ── Toasts ── */
+#toast {
+  position: fixed; bottom: 1.25rem; right: 1.25rem;
+  background: var(--green-dark);
+  color: #fff;
+  padding: .6rem 1rem;
+  border-radius: 8px;
+  font-size: .82rem;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .2s, transform .2s;
+  z-index: 300;
+  max-width: 280px;
+  pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+#toast.error { background: var(--red); }
+
+/* ── Misc ── */
+.empty-state { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: .85rem; }
+.empty-state .icon { font-size: 2rem; margin-bottom: .5rem; }
+.search-bar { display: flex; gap: .5rem; margin-bottom: .75rem; }
+.search-bar input { flex: 1; }
+hr.thin { border: none; border-top: 1px solid var(--border); margin: .75rem 0; }
+.chip-wrap { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .35rem; }
+.day-check-row { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .25rem; }
+.day-pill {
+  padding: .2rem .6rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  font-size: .72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  user-select: none;
+}
+.day-pill.on { background: var(--green-mid); border-color: var(--green-mid); color: #fff; }
+.notice { background: var(--gold-light); border-left: 3px solid var(--gold); padding: .6rem .85rem; border-radius: 4px; font-size: .8rem; margin-bottom: .75rem; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header>
+    <h1>🐴 Positive Strides SMS Hub</h1>
+    <span class="tagline">Bulk text sender</span>
+    <button class="gear-btn" onclick="openSettings()" title="Twilio Settings">⚙️</button>
+  </header>
+
+  <div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('contacts',this)">👥 Contacts</button>
+      <button class="tab" onclick="switchTab('groups',this)">🏷️ Groups</button>
+      <button class="tab" onclick="switchTab('send',this)">📤 Send</button>
+    </div>
+
+    <!-- ═══════════════ CONTACTS PANEL ═══════════════ -->
+    <div id="panel-contacts" class="panel active">
+
+      <div class="card">
+        <div class="card-title">
+          <span>All Contacts</span>
+          <div style="display:flex;gap:.5rem">
+            <button class="btn btn-ghost btn-sm" onclick="openImport()">⬆ Import CSV</button>
+            <button class="btn btn-green btn-sm" onclick="openAddContact()">+ Add Contact</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input type="text" id="contact-search" placeholder="Search by name, phone, role…" oninput="renderContacts()">
+          <select id="contact-filter-day" onchange="renderContacts()" style="width:auto">
+            <option value="">All days</option>
+            <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+            <option>Thursday</option><option>Friday</option><option>Saturday</option>
+          </select>
+          <select id="contact-filter-role" onchange="renderContacts()" style="width:auto">
+            <option value="">All roles</option>
+          </select>
+        </div>
+        <div id="contact-list-wrap"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ GROUPS PANEL ═══════════════ -->
+    <div id="panel-groups" class="panel">
+      <div class="card">
+        <div class="card-title">
+          <span>Groups</span>
+          <button class="btn btn-green btn-sm" onclick="openAddGroup()">+ New Group</button>
+        </div>
+        <div id="group-list-wrap"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SEND PANEL ═══════════════ -->
+    <div id="panel-send" class="panel">
+
+      <div class="card">
+        <div class="card-title">Select Recipients</div>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:.75rem">Choose groups and/or individual contacts. Duplicates are automatically removed.</p>
+
+        <div style="margin-bottom:.75rem">
+          <label>Groups</label>
+          <div id="send-group-chips" class="chip-wrap"></div>
+        </div>
+
+        <div>
+          <label>Individual Contacts</label>
+          <div class="search-bar" style="margin-bottom:.4rem">
+            <input type="text" id="send-contact-search" placeholder="Search contacts…" oninput="renderSendContactList()">
+          </div>
+          <div id="send-contact-list" style="max-height:180px;overflow-y:auto;border:1.5px solid var(--border);border-radius:6px;padding:.25rem .5rem"></div>
+        </div>
+      </div>
+
+      <div class="recipient-summary" id="recipient-summary">
+        <span class="recipient-count" id="recipient-count">0</span>
+        <span>recipients selected</span>
+        <span id="recipient-names" style="color:var(--text-muted);font-size:.75rem;flex:1;margin-left:.25rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Message</div>
+        <div class="field">
+          <textarea id="msg-body" rows="5" placeholder="Type your message here…" oninput="updateCharCount()"></textarea>
+          <div class="char-counter" id="char-counter">0 / 160</div>
+        </div>
+        <button class="btn btn-gold" id="send-btn" onclick="sendMessages()" style="width:100%;justify-content:center;padding:.65rem">
+          📤 Send Messages
+        </button>
+      </div>
+
+      <div class="card" id="results-card" style="display:none">
+        <div class="card-title">Results</div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        <div id="results-summary" style="font-size:.8rem;margin-bottom:.5rem"></div>
+        <ul class="result-list" id="result-list"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SETTINGS MODAL ═══════════════ -->
+<div class="overlay" id="overlay-settings">
+  <div class="modal">
+    <h2>⚙️ Twilio Settings</h2>
+    <div class="field"><label>Account SID</label><input type="text" id="cfg-sid" placeholder="ACxxxxxxxxxxxxxxxx"></div>
+    <div class="field"><label>Auth Token</label><input type="password" id="cfg-token" placeholder="Your auth token"></div>
+    <div class="field"><label>From Number</label><input type="text" id="cfg-from" placeholder="+14105551234"></div>
+    <div class="notice">🔒 Credentials are saved locally in your browser only — never sent anywhere except Twilio.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('overlay-settings')">Cancel</button>
+      <button class="btn btn-green" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ADD/EDIT CONTACT MODAL ═══════════════ -->
+<div class="overlay" id="overlay-contact">
+  <div class="modal">
+    <h2 id="contact-modal-title">Add Contact</h2>
+    <input type="hidden" id="edit-contact-id">
+    <div class="row2">
+      <div class="field"><label>Full Name *</label><input type="text" id="c-name" placeholder="Jane Smith"></div>
+      <div class="field"><label>Phone Number *</label><input type="text" id="c-phone" placeholder="(410) 555-1234"></div>
+    </div>
+    <div class="field"><label>Role</label>
+      <input type="text" id="c-role" placeholder="Volunteer, Rider, Staff…" list="role-datalist">
+      <datalist id="role-datalist"></datalist>
+    </div>
+    <div class="field">
+      <label>Days Active</label>
+      <div class="day-check-row" id="c-days">
+        <span class="day-pill" data-day="Monday" onclick="toggleDay(this)">Mon</span>
+        <span class="day-pill" data-day="Tuesday" onclick="toggleDay(this)">Tue</span>
+        <span class="day-pill" data-day="Wednesday" onclick="toggleDay(this)">Wed</span>
+        <span class="day-pill" data-day="Thursday" onclick="toggleDay(this)">Thu</span>
+        <span class="day-pill" data-day="Friday" onclick="toggleDay(this)">Fri</span>
+        <span class="day-pill" data-day="Saturday" onclick="toggleDay(this)">Sat</span>
+      </div>
+    </div>
+    <div class="field"><label>Notes</label><input type="text" id="c-notes" placeholder="Optional note…"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('overlay-contact')">Cancel</button>
+      <button class="btn btn-green" onclick="saveContact()">Save Contact</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ ADD/EDIT GROUP MODAL ═══════════════ -->
+<div class="overlay" id="overlay-group">
+  <div class="modal" style="max-width:520px">
+    <h2 id="group-modal-title">New Group</h2>
+    <input type="hidden" id="edit-group-id">
+    <div class="row2" style="margin-bottom:.75rem">
+      <div class="field"><label>Group Name *</label><input type="text" id="g-name" placeholder="Monday Volunteers"></div>
+      <div class="field">
+        <label>Color</label>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.25rem" id="g-color-picker"></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:.75rem">
+      <label>Quick-add by filter</label>
+      <div style="display:flex;gap:.5rem;margin-top:.25rem;flex-wrap:wrap">
+        <select id="g-filter-day" style="flex:1">
+          <option value="">Any day</option>
+          <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+          <option>Thursday</option><option>Friday</option><option>Saturday</option>
+        </select>
+        <select id="g-filter-role" style="flex:1">
+          <option value="">Any role</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="filterGroupContacts()">Filter</button>
+      </div>
+    </div>
+
+    <label>Members</label>
+    <div style="border:1.5px solid var(--border);border-radius:6px;max-height:200px;overflow-y:auto;padding:.25rem .5rem;margin-top:.25rem" id="g-contact-list"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('overlay-group')">Cancel</button>
+      <button class="btn btn-green" onclick="saveGroup()">Save Group</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CSV IMPORT MODAL ═══════════════ -->
+<div class="overlay" id="overlay-import">
+  <div class="modal" style="max-width:500px">
+    <h2>⬆ Import from CSV</h2>
+    <div class="notice">Export your Airtable view as CSV, then import here. Existing contacts with the same phone number will be updated.</div>
+    <div class="field">
+      <label>CSV File</label>
+      <input type="file" id="csv-file" accept=".csv" onchange="previewCSV()">
+    </div>
+    <div id="col-map-wrap" style="display:none">
+      <hr class="thin">
+      <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:.6rem">Map your CSV columns:</p>
+      <div class="col-map" id="col-map"></div>
+      <div class="field" style="margin-top:.75rem">
+        <label>Default Role (if no role column)</label>
+        <input type="text" id="import-default-role" placeholder="e.g. Volunteer">
+      </div>
+    </div>
+    <div id="import-preview" style="font-size:.78rem;color:var(--text-muted);margin-top:.5rem"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOverlay('overlay-import')">Cancel</button>
+      <button class="btn btn-green" id="import-btn" onclick="importCSV()" disabled>Import</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA STORE
+// ══════════════════════════════════════════════
+const COLORS = ['#2e6b3e','#7b4ea0','#c8913a','#2980b9','#c0392b','#16a085','#d35400','#8e44ad'];
+
+let contacts = JSON.parse(localStorage.getItem('ps_contacts') || '[]');
+let groups   = JSON.parse(localStorage.getItem('ps_groups')   || '[]');
+let settings = { sid: "AC89f709fa823bd405ca591725ba271eea", token: "883ad7a6fa7dfcb98d38aad815a9a57c", from: "+14434488623" };
+
+let csvHeaders = [];
+let csvRows    = [];
+
+// Selected group IDs and individual contact IDs for sending
+let selectedGroupIds   = new Set();
+let selectedContactIds = new Set();
+
+function save() {
+  localStorage.setItem('ps_contacts', JSON.stringify(contacts));
+  localStorage.setItem('ps_groups',   JSON.stringify(groups));
+}
+
+function saveSettingsData() {
+  localStorage.setItem('ps_twilio', JSON.stringify(settings));
+}
+
+// ══════════════════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'send') renderSendPanel();
+}
+
+// ══════════════════════════════════════════════
+//  CONTACTS PANEL
+// ══════════════════════════════════════════════
+function renderContacts() {
+  const q    = document.getElementById('contact-search').value.toLowerCase();
+  const fDay = document.getElementById('contact-filter-day').value;
+  const fRole= document.getElementById('contact-filter-role').value;
+
+  let filtered = contacts.filter(c => {
+    const matchQ    = !q || c.name.toLowerCase().includes(q) || c.phone.includes(q) || (c.role||'').toLowerCase().includes(q);
+    const matchDay  = !fDay  || (c.days||[]).includes(fDay);
+    const matchRole = !fRole || c.role === fRole;
+    return matchQ && matchDay && matchRole;
+  });
+
+  const wrap = document.getElementById('contact-list-wrap');
+  if (!filtered.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="icon">👥</div>${contacts.length ? 'No contacts match your filter.' : 'No contacts yet. Add one or import a CSV.'}</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<ul class="contact-list">${filtered.map(c => `
+    <li class="contact-item">
+      <div class="contact-avatar">${initials(c.name)}</div>
+      <div class="name">${esc(c.name)}</div>
+      <div class="phone">${esc(c.phone)}</div>
+      <div class="tags">
+        ${c.role ? `<span class="badge" style="background:${roleColor(c.role)}">${esc(c.role)}</span>` : ''}
+        ${(c.days||[]).map(d => `<span class="badge" style="background:#5a7060;font-size:.62rem">${d.slice(0,3)}</span>`).join('')}
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-xs" onclick="openEditContact('${c.id}')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteContact('${c.id}')">✕</button>
+      </div>
+    </li>`).join('')}</ul>`;
+
+  // Populate role filter
+  const roles = [...new Set(contacts.map(c => c.role).filter(Boolean))];
+  const rf = document.getElementById('contact-filter-role');
+  const curRole = rf.value;
+  rf.innerHTML = `<option value="">All roles</option>` + roles.map(r => `<option${r===curRole?' selected':''}>${esc(r)}</option>`).join('');
+
+  // Role datalist for add form
+  const dl = document.getElementById('role-datalist');
+  if (dl) dl.innerHTML = roles.map(r => `<option value="${esc(r)}">`).join('');
+}
+
+function initials(name) {
+  return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+}
+
+const _roleColorMap = {};
+function roleColor(role) {
+  if (!_roleColorMap[role]) {
+    const idx = Object.keys(_roleColorMap).length % COLORS.length;
+    _roleColorMap[role] = COLORS[idx];
+  }
+  return _roleColorMap[role];
+}
+
+function openAddContact() {
+  document.getElementById('contact-modal-title').textContent = 'Add Contact';
+  document.getElementById('edit-contact-id').value = '';
+  document.getElementById('c-name').value = '';
+  document.getElementById('c-phone').value = '';
+  document.getElementById('c-role').value = '';
+  document.getElementById('c-notes').value = '';
+  document.querySelectorAll('#c-days .day-pill').forEach(p => p.classList.remove('on'));
+  openOverlay('overlay-contact');
+}
+
+function openEditContact(id) {
+  const c = contacts.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('contact-modal-title').textContent = 'Edit Contact';
+  document.getElementById('edit-contact-id').value = id;
+  document.getElementById('c-name').value  = c.name;
+  document.getElementById('c-phone').value = c.phone;
+  document.getElementById('c-role').value  = c.role || '';
+  document.getElementById('c-notes').value = c.notes || '';
+  document.querySelectorAll('#c-days .day-pill').forEach(p => {
+    p.classList.toggle('on', (c.days||[]).includes(p.dataset.day));
+  });
+  openOverlay('overlay-contact');
+}
+
+function saveContact() {
+  const name  = document.getElementById('c-name').value.trim();
+  const phone = cleanPhone(document.getElementById('c-phone').value);
+  if (!name || !phone) { toast('Name and phone are required', true); return; }
+  const days  = [...document.querySelectorAll('#c-days .day-pill.on')].map(p => p.dataset.day);
+  const id    = document.getElementById('edit-contact-id').value;
+  const obj   = { name, phone, role: document.getElementById('c-role').value.trim(),
+                  days, notes: document.getElementById('c-notes').value.trim() };
+  if (id) {
+    const idx = contacts.findIndex(c => c.id === id);
+    contacts[idx] = { ...contacts[idx], ...obj };
+    toast('Contact updated');
+  } else {
+    obj.id = uid();
+    contacts.push(obj);
+    toast('Contact added');
+  }
+  save();
+  renderContacts();
+  closeOverlay('overlay-contact');
+}
+
+function deleteContact(id) {
+  if (!confirm('Delete this contact?')) return;
+  contacts = contacts.filter(c => c.id !== id);
+  groups.forEach(g => { g.contactIds = g.contactIds.filter(x => x !== id); });
+  save();
+  renderContacts();
+  renderGroups();
+}
+
+function toggleDay(el) { el.classList.toggle('on'); }
+
+// ══════════════════════════════════════════════
+//  GROUPS PANEL
+// ══════════════════════════════════════════════
+function renderGroups() {
+  const wrap = document.getElementById('group-list-wrap');
+  if (!groups.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="icon">🏷️</div>No groups yet. Create one to organize your contacts.</div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="group-grid">${groups.map(g => {
+    const count = (g.contactIds||[]).length;
+    const names = (g.contactIds||[]).slice(0,3).map(id => {
+      const c = contacts.find(x => x.id === id);
+      return c ? c.name.split(' ')[0] : '';
+    }).filter(Boolean).join(', ');
+    return `<div class="group-card" onclick="openEditGroup('${g.id}')">
+      <div class="g-dot" style="background:${g.color||COLORS[0]}"></div>
+      <div class="g-name">${esc(g.name)}</div>
+      <div class="g-count">${count} contact${count!==1?'s':''} · ${names}${count>3?'…':''}</div>
+      <div class="group-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-danger btn-xs" onclick="deleteGroup('${g.id}')">✕</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+
+  // Also populate the role filter in the group modal
+  populateGroupRoleFilter();
+}
+
+function openAddGroup() {
+  document.getElementById('group-modal-title').textContent = 'New Group';
+  document.getElementById('edit-group-id').value = '';
+  document.getElementById('g-name').value = '';
+  document.getElementById('g-filter-day').value = '';
+  document.getElementById('g-filter-role').value = '';
+  buildColorPicker('');
+  renderGroupContactList([]);
+  openOverlay('overlay-group');
+}
+
+function openEditGroup(id) {
+  const g = groups.find(x => x.id === id);
+  if (!g) return;
+  document.getElementById('group-modal-title').textContent = 'Edit Group';
+  document.getElementById('edit-group-id').value = id;
+  document.getElementById('g-name').value = g.name;
+  buildColorPicker(g.color || COLORS[0]);
+  renderGroupContactList(g.contactIds || []);
+  openOverlay('overlay-group');
+}
+
+function buildColorPicker(selected) {
+  document.getElementById('g-color-picker').innerHTML = COLORS.map(c =>
+    `<span onclick="pickColor(this,'${c}')" style="width:20px;height:20px;border-radius:50%;background:${c};cursor:pointer;border:2px solid ${c===selected?'#fff':'transparent'};box-shadow:${c===selected?'0 0 0 2px '+c:'none'};display:inline-block" data-color="${c}"></span>`
+  ).join('');
+}
+
+function pickColor(el, color) {
+  document.querySelectorAll('#g-color-picker span').forEach(s => {
+    const c = s.dataset.color;
+    s.style.border = '2px solid transparent';
+    s.style.boxShadow = 'none';
+  });
+  el.style.border = '2px solid #fff';
+  el.style.boxShadow = `0 0 0 2px ${color}`;
+}
+
+function getSelectedColor() {
+  const el = document.querySelector('#g-color-picker span[style*="solid #fff"]');
+  return el ? el.dataset.color : COLORS[0];
+}
+
+function renderGroupContactList(selectedIds) {
+  const wrap = document.getElementById('g-contact-list');
+  if (!contacts.length) { wrap.innerHTML = '<div style="padding:.5rem;font-size:.78rem;color:var(--text-muted)">No contacts yet.</div>'; return; }
+  wrap.innerHTML = contacts.map(c => `
+    <label style="display:flex;align-items:center;gap:.5rem;padding:.3rem .25rem;font-size:.82rem;cursor:pointer;font-weight:400;color:var(--text)">
+      <input type="checkbox" class="contact-checkbox gc-cb" value="${c.id}" ${selectedIds.includes(c.id)?'checked':''}>
+      ${esc(c.name)}
+      ${c.role?`<span class="badge" style="background:${roleColor(c.role)};font-size:.62rem">${esc(c.role)}</span>`:''}
+      ${(c.days||[]).map(d=>`<span class="badge" style="background:#5a7060;font-size:.58rem">${d.slice(0,3)}</span>`).join('')}
+    </label>`).join('');
+}
+
+function filterGroupContacts() {
+  const day  = document.getElementById('g-filter-day').value;
+  const role = document.getElementById('g-filter-role').value;
+  const currentChecked = [...document.querySelectorAll('.gc-cb:checked')].map(cb => cb.value);
+  contacts.forEach(c => {
+    const cb = document.querySelector(`.gc-cb[value="${c.id}"]`);
+    if (!cb) return;
+    const matchDay  = !day  || (c.days||[]).includes(day);
+    const matchRole = !role || c.role === role;
+    if (matchDay && matchRole) cb.checked = true;
+  });
+}
+
+function saveGroup() {
+  const name = document.getElementById('g-name').value.trim();
+  if (!name) { toast('Group name required', true); return; }
+  const id   = document.getElementById('edit-group-id').value;
+  const cids = [...document.querySelectorAll('.gc-cb:checked')].map(cb => cb.value);
+  const color= getSelectedColor();
+  if (id) {
+    const idx = groups.findIndex(g => g.id === id);
+    groups[idx] = { ...groups[idx], name, contactIds: cids, color };
+    toast('Group updated');
+  } else {
+    groups.push({ id: uid(), name, contactIds: cids, color });
+    toast('Group created');
+  }
+  save();
+  renderGroups();
+  closeOverlay('overlay-group');
+}
+
+function deleteGroup(id) {
+  if (!confirm('Delete this group?')) return;
+  groups = groups.filter(g => g.id !== id);
+  selectedGroupIds.delete(id);
+  save();
+  renderGroups();
+}
+
+function populateGroupRoleFilter() {
+  const roles = [...new Set(contacts.map(c => c.role).filter(Boolean))];
+  const el = document.getElementById('g-filter-role');
+  if (!el) return;
+  el.innerHTML = `<option value="">Any role</option>` + roles.map(r => `<option>${esc(r)}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  SEND PANEL
+// ══════════════════════════════════════════════
+function renderSendPanel() {
+  renderSendGroups();
+  renderSendContactList();
+  updateRecipientSummary();
+}
+
+function renderSendGroups() {
+  const wrap = document.getElementById('send-group-chips');
+  if (!groups.length) {
+    wrap.innerHTML = '<span style="font-size:.78rem;color:var(--text-muted)">No groups yet. Create some in the Groups tab.</span>';
+    return;
+  }
+  wrap.innerHTML = groups.map(g => {
+    const on = selectedGroupIds.has(g.id);
+    return `<span class="badge${on?' removable':''}" style="background:${on?g.color||COLORS[0]:'#c0cfc2'};cursor:pointer;font-size:.75rem;padding:.3rem .75rem" onclick="toggleSendGroup('${g.id}')" title="${g.contactIds.length} contacts">
+      ${esc(g.name)} <span style="opacity:.75">(${g.contactIds.length})</span>
+    </span>`;
+  }).join('');
+}
+
+function toggleSendGroup(id) {
+  if (selectedGroupIds.has(id)) selectedGroupIds.delete(id);
+  else selectedGroupIds.add(id);
+  renderSendGroups();
+  updateRecipientSummary();
+}
+
+function renderSendContactList() {
+  const q = (document.getElementById('send-contact-search')?.value || '').toLowerCase();
+  const wrap = document.getElementById('send-contact-list');
+  const filtered = contacts.filter(c => !q || c.name.toLowerCase().includes(q) || c.phone.includes(q));
+  if (!filtered.length) {
+    wrap.innerHTML = '<div style="padding:.4rem;font-size:.78rem;color:var(--text-muted)">No contacts found.</div>';
+    return;
+  }
+  wrap.innerHTML = filtered.map(c => `
+    <label style="display:flex;align-items:center;gap:.5rem;padding:.3rem .25rem;font-size:.82rem;cursor:pointer;font-weight:400;color:var(--text)">
+      <input type="checkbox" class="contact-checkbox send-cb" value="${c.id}" ${selectedContactIds.has(c.id)?'checked':''} onchange="toggleSendContact('${c.id}',this.checked)">
+      ${esc(c.name)}
+      <span style="color:var(--text-muted);font-size:.75rem">${esc(c.phone)}</span>
+      ${c.role?`<span class="badge" style="background:${roleColor(c.role)};font-size:.6rem">${esc(c.role)}</span>`:''}
+    </label>`).join('');
+}
+
+function toggleSendContact(id, checked) {
+  if (checked) selectedContactIds.add(id);
+  else selectedContactIds.delete(id);
+  updateRecipientSummary();
+}
+
+function getEffectiveRecipients() {
+  const ids = new Set(selectedContactIds);
+  selectedGroupIds.forEach(gid => {
+    const g = groups.find(x => x.id === gid);
+    if (g) g.contactIds.forEach(id => ids.add(id));
+  });
+  return [...ids].map(id => contacts.find(c => c.id === id)).filter(Boolean);
+}
+
+function updateRecipientSummary() {
+  const recips = getEffectiveRecipients();
+  document.getElementById('recipient-count').textContent = recips.length;
+  document.getElementById('recipient-names').textContent = recips.slice(0,5).map(c=>c.name.split(' ')[0]).join(', ') + (recips.length > 5 ? '…' : '');
+}
+
+function updateCharCount() {
+  const len = document.getElementById('msg-body').value.length;
+  const el  = document.getElementById('char-counter');
+  const segs = Math.ceil(len / 160) || 1;
+  el.textContent = `${len} / 160${segs > 1 ? ` (${segs} segments)` : ''}`;
+  el.className = 'char-counter' + (len > 320 ? ' over' : len > 160 ? ' warn' : '');
+}
+
+// ══════════════════════════════════════════════
+//  SEND via TWILIO
+// ══════════════════════════════════════════════
+async function sendMessages() {
+  if (!settings.sid || !settings.token || !settings.from) {
+    toast('Configure Twilio settings first (⚙️)', true); return;
+  }
+  const recips = getEffectiveRecipients();
+  if (!recips.length) { toast('No recipients selected', true); return; }
+  const body = document.getElementById('msg-body').value.trim();
+  if (!body) { toast('Message is empty', true); return; }
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const card = document.getElementById('results-card');
+  const bar  = document.getElementById('progress-bar');
+  const list = document.getElementById('result-list');
+  const summary = document.getElementById('results-summary');
+  card.style.display = 'block';
+  list.innerHTML = '';
+  summary.textContent = '';
+  bar.style.width = '0%';
+
+  let sent = 0, failed = 0;
+  for (let i = 0; i < recips.length; i++) {
+    const c = recips[i];
+    const num = cleanPhone(c.phone);
+    try {
+      const r = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${settings.sid}/Messages.json`,
+        { method:'POST',
+          headers:{ 'Authorization':'Basic '+btoa(settings.sid+':'+settings.token),
+                    'Content-Type':'application/x-www-form-urlencoded' },
+          body: `To=${encodeURIComponent(num)}&From=${encodeURIComponent(settings.from)}&Body=${encodeURIComponent(body)}`
+        }
+      );
+      if (r.ok) { sent++; addResult(list, c.name, num, true); }
+      else { const e = await r.json(); failed++; addResult(list, c.name, num, false, e.message); }
+    } catch(e) { failed++; addResult(list, c.name, num, false, e.message); }
+    bar.style.width = ((i+1)/recips.length*100) + '%';
+  }
+
+  summary.innerHTML = `<span style="color:var(--green-bright)">✓ ${sent} sent</span>${failed?` &nbsp; <span style="color:var(--red)">✗ ${failed} failed</span>`:''}`;
+  btn.disabled = false;
+  btn.textContent = '📤 Send Messages';
+  toast(sent + ' message' + (sent!==1?'s':'') + ' sent!');
+}
+
+function addResult(list, name, phone, ok, err='') {
+  const li = document.createElement('li');
+  li.className = 'result-item';
+  li.innerHTML = `<div class="result-dot ${ok?'ok':'err'}"></div><span style="flex:1">${esc(name)} <span style="color:var(--text-muted)">${phone}</span></span>${err?`<span style="color:var(--red)">${esc(err)}</span>`:''}`;
+  list.appendChild(li);
+}
+
+// ══════════════════════════════════════════════
+//  CSV IMPORT
+// ══════════════════════════════════════════════
+function openImport() {
+  document.getElementById('csv-file').value = '';
+  document.getElementById('col-map-wrap').style.display = 'none';
+  document.getElementById('import-preview').textContent = '';
+  document.getElementById('import-btn').disabled = true;
+  document.getElementById('import-default-role').value = '';
+  openOverlay('overlay-import');
+}
+
+function previewCSV() {
+  const file = document.getElementById('csv-file').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').filter(l => l.trim());
+    csvHeaders = parseCSVRow(lines[0]);
+    csvRows = lines.slice(1).map(parseCSVRow).filter(r => r.some(c => c));
+
+    const wrap = document.getElementById('col-map');
+    const fields = [
+      { key:'name',  label:'Full Name',     required:true },
+      { key:'phone', label:'Phone Number',  required:true },
+      { key:'role',  label:'Role',          required:false },
+      { key:'day',   label:'Day(s)',         required:false },
+    ];
+    wrap.innerHTML = fields.map(f => `
+      <label>${f.label}${f.required?' *':''}</label>
+      <select id="map-${f.key}">
+        ${f.required?'':'<option value="">(skip)</option>'}
+        ${csvHeaders.map((h,i) => `<option value="${i}" ${h.toLowerCase().includes(f.key)||h.toLowerCase().includes(f.label.toLowerCase().split(' ')[0].toLowerCase())?'selected':''}>${esc(h)}</option>`).join('')}
+      </select>`).join('');
+
+    document.getElementById('col-map-wrap').style.display = 'block';
+    document.getElementById('import-preview').textContent = `Found ${csvRows.length} rows. Map columns above then click Import.`;
+    document.getElementById('import-btn').disabled = false;
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVRow(row) {
+  const result = []; let cur = ''; let inQ = false;
+  for (const ch of row) {
+    if (ch === '"') { inQ = !inQ; }
+    else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else cur += ch;
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function importCSV() {
+  const mapName  = +document.getElementById('map-name').value;
+  const mapPhone = +document.getElementById('map-phone').value;
+  const mapRole  = document.getElementById('map-role').value;
+  const mapDay   = document.getElementById('map-day').value;
+  const defRole  = document.getElementById('import-default-role').value.trim();
+
+  let added = 0, updated = 0, skipped = 0;
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+  csvRows.forEach(row => {
+    const name  = (row[mapName] || '').trim();
+    const phone = cleanPhone(row[mapPhone] || '');
+    if (!name || !phone) { skipped++; return; }
+
+    const role  = mapRole !== '' ? (row[+mapRole] || '').trim() || defRole : defRole;
+    const dayRaw= mapDay  !== '' ? (row[+mapDay]  || '').trim() : '';
+    const days  = dayRaw ? DAYS.filter(d => dayRaw.toLowerCase().includes(d.toLowerCase().slice(0,3))) : [];
+
+    const existing = contacts.find(c => c.phone === phone);
+    if (existing) {
+      existing.name = name;
+      if (role)       existing.role = role;
+      if (days.length) existing.days = days;
+      updated++;
+    } else {
+      contacts.push({ id: uid(), name, phone, role, days, notes:'' });
+      added++;
+    }
+  });
+
+  save();
+  renderContacts();
+  closeOverlay('overlay-import');
+  toast(`Imported: ${added} added, ${updated} updated, ${skipped} skipped`);
+}
+
+// ══════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('cfg-sid').value   = settings.sid   || '';
+  document.getElementById('cfg-token').value = settings.token || '';
+  document.getElementById('cfg-from').value  = settings.from  || '';
+  openOverlay('overlay-settings');
+}
+
+function saveSettings() {
+  settings = {
+    sid:   document.getElementById('cfg-sid').value.trim(),
+    token: document.getElementById('cfg-token').value.trim(),
+    from:  document.getElementById('cfg-from').value.trim(),
+  };
+  saveSettingsData();
+  closeOverlay('overlay-settings');
+  toast('Twilio settings saved');
+}
+
+// ══════════════════════════════════════════════
+//  OVERLAYS / MODALS
+// ══════════════════════════════════════════════
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════
+function cleanPhone(raw) {
+  const digits = (raw || '').replace(/\D/g, '');
+  return digits.length === 10 ? '+1' + digits : digits.length === 11 && digits[0]==='1' ? '+' + digits : digits ? '+' + digits : '';
+}
+
+function uid() { return Math.random().toString(36).slice(2,10); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+let toastTimer;
+function toast(msg, err=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (err ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 3000);
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+renderContacts();
+renderGroups();
+
+</script>
+</body>
+</html>
